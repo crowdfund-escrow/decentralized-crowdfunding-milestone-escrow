@@ -1,4 +1,4 @@
-﻿# App — Next.js (frontend + API)
+# App — Next.js (frontend + API)
 
 Owners: **FE** (pages, wallet UI) and **BE** (API routes, Prisma, event indexing).
 Next.js serves both the website and the backend API, so there is no separate backend folder.
