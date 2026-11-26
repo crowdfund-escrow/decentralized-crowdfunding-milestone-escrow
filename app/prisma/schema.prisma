@@ -1,0 +1,93 @@
+﻿// Prisma schema. The blockchain is authoritative; these tables are an indexed, searchable copy.
+// Store ETH amounts as raw wei strings for exact reconciliation.
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String         @id @default(cuid())
+  wallet      String         @unique
+  createdAt   DateTime       @default(now())
+  campaigns   Campaign[]
+  contributions Contribution[]
+  votes       Vote[]
+}
+
+model Campaign {
+  id            String         @id @default(cuid())
+  chainId       Int            // on-chain campaign id (authoritative)
+  creator       User           @relation(fields: [creatorWallet], references: [wallet])
+  creatorWallet String
+  title         String
+  description   String
+  imageUrl      String?
+  goalWei       String         // raw wei
+  deadline      DateTime
+  totalRaisedWei String        @default("0")
+  status        String         @default("active") // active | succeeded | failed
+  txHash        String         // creation tx
+  createdAt     DateTime       @default(now())
+  milestones    Milestone[]
+  contributions Contribution[]
+  transactions  Transaction[]
+
+  @@unique([chainId])
+}
+
+model Milestone {
+  id           String    @id @default(cuid())
+  campaign     Campaign  @relation(fields: [campaignId], references: [id])
+  campaignId   String
+  index        Int       // milestone index on-chain
+  description  String
+  allocationBps Int      // basis points; all milestones sum to 10000
+  evidenceUrl  String?
+  status       String    @default("pending") // pending | voting | approved | released
+  votes        Vote[]
+
+  @@unique([campaignId, index])
+}
+
+model Contribution {
+  id          String   @id @default(cuid())
+  campaign    Campaign @relation(fields: [campaignId], references: [id])
+  campaignId  String
+  contributor User     @relation(fields: [wallet], references: [wallet])
+  wallet      String
+  amountWei   String
+  txHash      String
+  createdAt   DateTime @default(now())
+}
+
+model Vote {
+  id          String    @id @default(cuid())
+  milestone   Milestone @relation(fields: [milestoneId], references: [id])
+  milestoneId String
+  voter       User      @relation(fields: [wallet], references: [wallet])
+  wallet      String
+  support     Boolean
+  weightWei   String
+  txHash      String
+
+  @@unique([milestoneId, wallet])
+}
+
+// Indexed blockchain events. Dedupe on (txHash, logIndex).
+model Transaction {
+  id         String   @id @default(cuid())
+  campaign   Campaign? @relation(fields: [campaignId], references: [id])
+  campaignId String?
+  txHash     String
+  logIndex   Int
+  eventType  String   // CampaignCreated | ContributionReceived | MilestoneSubmitted | ...
+  wallet     String?
+  amountWei  String?
+  createdAt  DateTime @default(now())
+
+  @@unique([txHash, logIndex])
+}

@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Environment & secrets — NEVER commit these
+.env
+.env.local
+.env*.local
+*.key
+*.pem
+
+# Next.js
+app/.next/
+app/out/
+app/build/
+.vercel
+
+# Prisma
+app/prisma/*.db
+
+# Foundry
+contracts/out/
+contracts/cache/
+contracts/broadcast/
+contracts/lib/
+
+# Logs & OS
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+
+# Editors
+.idea/
+.vscode/*
+!.vscode/extensions.json
