@@ -1,4 +1,4 @@
-﻿// Prisma schema. The blockchain is authoritative; these tables are an indexed, searchable copy.
+// Prisma schema. The blockchain is authoritative; these tables are an indexed, searchable copy.
 // Store ETH amounts as raw wei strings for exact reconciliation.
 generator client {
   provider = "prisma-client-js"

@@ -1,4 +1,4 @@
-﻿import { CHAIN_ID } from "./contract";
+import { CHAIN_ID } from "./contract";
 
 const SEPOLIA_HEX = "0x" + CHAIN_ID.toString(16); // 0xaa36a7
 
