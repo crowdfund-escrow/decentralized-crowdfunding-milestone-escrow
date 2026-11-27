@@ -1,0 +1,26 @@
+name: Index Sepolia events
+
+# Pings the deployed app's stateless indexer route on a schedule so the off-chain
+# Postgres copy stays current. GitHub's shortest cron interval is 5 minutes and runs
+# may be delayed under load; the route re-scans a block window each time and dedupes,
+# so occasional skips self-heal on the next run.
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  index:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger indexer route
+        env:
+          APP_BASE_URL: ${{ secrets.APP_BASE_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$APP_BASE_URL" ] || [ -z "$CRON_SECRET" ]; then
+            echo "Set repo secrets APP_BASE_URL (e.g. https://your-app.vercel.app) and CRON_SECRET."
+            exit 1
+          fi
+          curl -fsS -X GET "$APP_BASE_URL/api/cron/index" \
+            -H "authorization: Bearer $CRON_SECRET"

@@ -5,8 +5,11 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  // Pooled connection (e.g. Neon pgbouncer) used by the app at runtime.
+  url       = env("DATABASE_URL")
+  // Direct (unpooled) connection used for migrations. Locally, set DIRECT_URL = DATABASE_URL.
+  directUrl = env("DIRECT_URL")
 }
 
 model User {

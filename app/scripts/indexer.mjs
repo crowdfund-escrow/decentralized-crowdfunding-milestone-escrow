@@ -16,6 +16,9 @@ const RPC = process.env.SEPOLIA_RPC_URL;
 const ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
 const START_BLOCK = Number(process.env.INDEXER_START_BLOCK ?? 0);
 const POLL_MS = Number(process.env.INDEXER_POLL_MS ?? 15000);
+// Max block span per eth_getLogs call. Free-tier providers (e.g. Alchemy free) cap this
+// at 10 blocks, so we scan in bounded windows rather than one large range.
+const LOG_RANGE = Number(process.env.INDEXER_LOG_RANGE ?? 10);
 
 if (!RPC || !ADDRESS) {
   console.error("Set SEPOLIA_RPC_URL and NEXT_PUBLIC_CONTRACT_ADDRESS");
@@ -84,8 +87,12 @@ async function main() {
     try {
       const head = await provider.getBlockNumber();
       if (head >= from) {
-        const logs = await provider.getLogs({ address: ADDRESS, fromBlock: from, toBlock: head });
-        for (const log of logs) await handle(log);
+        // Scan in bounded windows so free-tier getLogs range limits are respected.
+        for (let start = from; start <= head; start += LOG_RANGE) {
+          const end = Math.min(start + LOG_RANGE - 1, head);
+          const logs = await provider.getLogs({ address: ADDRESS, fromBlock: start, toBlock: end });
+          for (const log of logs) await handle(log);
+        }
         from = head + 1;
       }
     } catch (e) {
