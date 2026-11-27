@@ -99,7 +99,14 @@ See [`docs/03-team-roles.md`](docs/03-team-roles.md) for the full per-role check
 
 ## Status
 
-🚧 Scaffolding stage. See [`docs/01-roadmap.md`](docs/01-roadmap.md) for the 8-stage plan.
+✅ **Live on Sepolia and publicly deployed.** The `CrowdfundingEscrow` contract is deployed at
+`0x1814bd123576A928b1642D5f56e3329A12789825` (20 passing Foundry tests; the full create →
+contribute → vote → release → refund lifecycle has been exercised on-chain), and the web app runs
+on Vercel + Neon with a scheduled event indexer.
+
+- **Live app:** <https://decentralized-crowdfunding-mileston.vercel.app>
+- **Contract:** [Sepolia Etherscan](https://sepolia.etherscan.io/address/0x1814bd123576A928b1642D5f56e3329A12789825)
+- **Deploy setup:** [`docs/04-deployment.md`](docs/04-deployment.md) · original plan: [`docs/01-roadmap.md`](docs/01-roadmap.md)
 
 ## License
 
