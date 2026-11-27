@@ -1,4 +1,4 @@
-﻿# Integration Contract (the frozen interface)
+# Integration Contract (the frozen interface)
 
 This is the single source of truth for how the three code areas connect. Once agreed, treat it as
 frozen — any change must be announced to the whole team.
@@ -49,3 +49,12 @@ with the confirmed blockchain campaign id and transaction.
 | Vote | sends vote tx | indexes vote | records vote |
 | Release funds | shows release action | updates indexed records | transfers ETH |
 | Claim refund | shows refund action | records refund event | returns ETH |
+
+## Live deployment (Sepolia)
+
+- **Contract address:** `0x1814bd123576A928b1642D5f56e3329A12789825`
+- **Network:** Ethereum Sepolia (chainId 11155111)
+- **ABI:** `app/lib/abi/CrowdfundingEscrow.json`
+- **RPC note:** deployed via a public RPC; free public nodes are unreliable for sustained writes. For a stable demo use an Alchemy/Infura Sepolia key as `SEPOLIA_RPC_URL` / `NEXT_PUBLIC` provider.
+
+Set `NEXT_PUBLIC_CONTRACT_ADDRESS` to the address above in `app/.env`.
